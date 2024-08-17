@@ -13,5 +13,5 @@ def run():
     st.markdown ("- ### Возможные риски и ограничения модели")  
     st.divider()
     st.button("Reset", type="primary")
-if __name__ == "__main__":
+if __name__ == "__main__":   
     run()
