@@ -8,7 +8,7 @@ def main():
     'Second'])
     pages_main = {
     'Welcome': main_page,
-    'Second': page_1}
+    'Second': run_page_1.py}
     # Run selected page
     pages_main[page_selection]()
 def main_page():
