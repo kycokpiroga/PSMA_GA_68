@@ -36,7 +36,7 @@ def ml_polynomial(features, output):
     mse = mean_squared_error(output, self_pred)
     r2 = r2_score(output, self_pred)
     
-    return self_pred, mse, r2
+    return self_pred, mse, r2, model
 
 def user_u():
     col1, col2, col3 = st.columns(3)
@@ -87,7 +87,7 @@ def user_u():
 features, output = preparation()
 
 # Perform polynomial regression
-predictions, mse, r2 = ml_polynomial(features, output)
+predictions, mse, r2, model = ml_polynomial(features, output)
 
 st.write("Mean Squared Error:", mse)
 st.write("R-squared Score:", r2)
@@ -97,7 +97,7 @@ st.header('Внесите данные, Дата калибровки генер
 day_from_calib_gen, k_rec = user_u()
 
 def prep_syntes(k_rec, day_from_calib_gen):
-    k_rec = -0.000008 * (k_rec ** 2) + 0.00515 * k_rec + 0.1555
+    k_rec = -0.000008 * (k_rec ** 2) + 0.0053 * k_rec + 0.1555
     day_from_calib_gen = day_from_calib_gen * (-1)
     
     if k_rec < 0:
@@ -113,5 +113,15 @@ k_rec, day_from_calib_gen = prep_syntes(k_rec, day_from_calib_gen)
 st.write("k_rec:", k_rec)
 st.write("day_from_calib_gen:", day_from_calib_gen)
 
-def syn_predict():
-    syn_pred = model.predict(features)
+
+# Создание DataFrame с переменными
+data = {'day_from_calib_gen': [day_from_calib_gen],
+    'k_rec': [k_rec]  
+}
+
+user_data = pd.DataFrame(data)
+# Вывод DataFrame
+st.write(user_data)
+user_pred = model.predict(user_data)
+user_pred = user_pred.round(-1)
+st.write("Предполагаемое значение активности при передачи в КК:", user_pred)
