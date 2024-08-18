@@ -7,7 +7,7 @@ from sklearn.preprocessing import PolynomialFeatures
 from sklearn.linear_model import LinearRegression
 from sklearn.pipeline import make_pipeline
 from sklearn.metrics import mean_squared_error, r2_score
-
+import datetime
 def func_page_1():
     st.set_page_config(
         page_title="PSMA",
@@ -43,6 +43,43 @@ features, output = preparation()
 # Perform polynomial regression
 predictions, mse, r2 = ml_polynomial(features, output)
 
-st.write("Predicted values:", predictions)
 st.write("Mean Squared Error:", mse)
 st.write("R-squared Score:", r2)
+st.header('Внесите данные, Дата калибровки генератора галлия, дата и время предыдущего синтеза или ТЭ, дата и время предполагаемого синтеза', divider='rainbow')
+col1, col2, col3 = st.columns(3)
+with col1:
+    # Ввод даты
+    date = st.date_input("Выберите дату из паспорта генератора", datetime.date.today())
+
+with col2:
+     # Ввод даты
+    date = st.date_input("Выберите дату и время передачи на КК последнего синтеза или ТЭ", datetime.date.today())
+
+    # Ввод времени в формате строки
+    time_str = st.text_input("Введите время", "12:00")
+
+    # Преобразование строки в объект времени
+    try:
+        time = datetime.datetime.strptime(time_str, "%H:%M").time()
+    except ValueError:
+        st.error("Неверный формат времени. Пожалуйста, используйте формат HH:MM.")
+    # Объединение даты и времени
+    datetime_selected = datetime.datetime.combine(date, time)
+
+with col3:
+     # Ввод даты
+    date_2 = st.date_input("Выберите дату и время передачи на КК предполагаемого синтеза", datetime.date.today())
+
+    # Ввод времени в формате строки
+    time_str_2 = st.text_input("Введите время", "13:00")
+
+    # Преобразование строки в объект времени
+    try:
+        time_2 = datetime.datetime.strptime(time_str_2, "%H:%M").time()
+    except ValueError:
+        st.error("Неверный формат времени. Пожалуйста, используйте формат HH:MM.")
+
+
+    # Объединение даты и времени
+    datetime_selected_2 = datetime.datetime.combine(date_2, time_2)
+
