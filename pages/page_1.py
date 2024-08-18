@@ -10,7 +10,7 @@ from sklearn.metrics import mean_squared_error, r2_score
 
 def func_page_1():
     st.set_page_config(
-        page_title="Second",
+        page_title="PSMA",
         page_icon="👋",
     )
     st.header('DOTA-PSMA-617_Ga-68_2', divider='rainbow')
