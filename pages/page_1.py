@@ -20,6 +20,8 @@ def preparation():
     psma_617_df = pd.read_csv('PSMA.csv')
     output = psma_617_df['A']
     features = psma_617_df[['day_from_calib_gen', 'k_rec']]
+    st.scatter_chart(psma_617_df, x="day_from_calib_gen", y="A")
+    st.subheader('Визуальное предствление используемой модели')
     return features, output
 
 def ml_polynomial(features, output):
@@ -30,13 +32,13 @@ def ml_polynomial(features, output):
     model.fit(features, output)
     
     # Predict
-    self_pred = model.predict(features)
+    #self_pred = model.predict(features)
     
     # Calculate scores
-    mse = mean_squared_error(output, self_pred)
-    r2 = r2_score(output, self_pred)
+    #mse = mean_squared_error(output, self_pred)
+    #r2 = r2_score(output, self_pred)
     
-    return self_pred, mse, r2, model
+    return  model #self_pred, mse, r2,
 
 def user_u():
     col1, col2, col3 = st.columns(3)
@@ -76,7 +78,7 @@ def user_u():
         datetime_selected_2 = datetime.datetime.combine(date_2, time_2)
 
     day_from_calib_gen = (date_2 - date_0).days
-    st.write("Количество дней между датой калибровки и предполгаемым синтезом:", day_from_calib_gen)
+    st.write("Количество дней между датой калибровки генератора и предполагаемым синтезом:", day_from_calib_gen)
     
     k_rec = (datetime_selected_2 - datetime_selected_1).total_seconds() / 60
     st.write("Количество минут между синтезами:", k_rec)
@@ -87,17 +89,16 @@ def user_u():
 features, output = preparation()
 
 # Perform polynomial regression
-predictions, mse, r2, model = ml_polynomial(features, output)
+model = ml_polynomial(features, output) #predictions, mse, r2,
 
-st.write("Mean Squared Error:", mse)
-st.write("R-squared Score:", r2)
-st.header('Внесите данные, Дата калибровки генератора галлия, дата и время предыдущего синтеза или ТЭ, дата и время предполагаемого синтеза', divider='rainbow')
-
+#st.write("Mean Squared Error:", mse)
+#st.write("R-squared Score:", r2)
+st.caption('Внесите данные, Дата калибровки генератора Галлия-68, дата и время предыдущего синтеза или ТЭ, дата и время предполагаемого синтеза')
 # Call the user_u function to display the input fields and get the values
 day_from_calib_gen, k_rec = user_u()
 
 def prep_syntes(k_rec, day_from_calib_gen):
-    k_rec = -0.000008 * (k_rec ** 2) + 0.0053 * k_rec + 0.1555
+    k_rec = -0.000008 * (k_rec ** 2) + 0.0052 * k_rec + 0.1552
     day_from_calib_gen = day_from_calib_gen * (-1)
     
     if k_rec < 0:
@@ -121,7 +122,9 @@ data = {'day_from_calib_gen': [day_from_calib_gen],
 
 user_data = pd.DataFrame(data)
 # Вывод DataFrame
-st.write(user_data)
+#st.write(user_data)
 user_pred = model.predict(user_data)
 user_pred = user_pred.round(-1)
-st.write("Предполагаемое значение активности при передачи в КК:", user_pred)
+st.write("Предполагаемое значение активности при передачи в КК МБк:")
+st.success(user_pred)
+st.success("± 100 МБк,  R²  = 0.8919")
