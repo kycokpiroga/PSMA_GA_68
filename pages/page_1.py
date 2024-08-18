@@ -77,10 +77,11 @@ def user_u():
 
     day_from_calib_gen = (date_2 - date_0).days
     st.write("Количество дней между датой калибровки и предполгаемым синтезом:", day_from_calib_gen)
-
+    
     k_rec = (datetime_selected_2 - datetime_selected_1).total_seconds() / 60
     st.write("Количество минут между синтезами:", k_rec)
-    st.write("Количество часов между синтезами:",round(k_rec / 60, 2))
+    st.write("Количество часов между синтезами:", round(k_rec / 60, 2))
+    return day_from_calib_gen, k_rec
 
 # Prepare the data
 features, output = preparation()
@@ -92,5 +93,25 @@ st.write("Mean Squared Error:", mse)
 st.write("R-squared Score:", r2)
 st.header('Внесите данные, Дата калибровки генератора галлия, дата и время предыдущего синтеза или ТЭ, дата и время предполагаемого синтеза', divider='rainbow')
 
-# Call the user_u function to display the input fields
-user_u()
+# Call the user_u function to display the input fields and get the values
+day_from_calib_gen, k_rec = user_u()
+
+def prep_syntes(k_rec, day_from_calib_gen):
+    k_rec = -0.000008 * (k_rec ** 2) + 0.00515 * k_rec + 0.1555
+    day_from_calib_gen = day_from_calib_gen * (-1)
+    
+    if k_rec < 0:
+        k_rec = 1
+    if k_rec > 1:
+        k_rec = 1
+    return k_rec, day_from_calib_gen
+
+# Call the predict_syntes function with the values from user_u
+k_rec, day_from_calib_gen = prep_syntes(k_rec, day_from_calib_gen)
+
+# Display the results
+st.write("k_rec:", k_rec)
+st.write("day_from_calib_gen:", day_from_calib_gen)
+
+def syn_predict():
+    syn_pred = model.predict(features)
