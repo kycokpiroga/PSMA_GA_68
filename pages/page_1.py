@@ -113,7 +113,7 @@ def prep_syntes(k_rec, day_from_calib_gen):
 k_rec, day_from_calib_gen = prep_syntes(k_rec, day_from_calib_gen)
 
 # Display the results
-st.write("k_rec:", k_rec)
+st.write("k_rec:", round(k_rec, 3))
 
 # Создание DataFrame с переменными
 data = {'day_from_calib_gen': [day_from_calib_gen],
