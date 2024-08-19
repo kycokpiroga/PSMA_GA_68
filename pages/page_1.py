@@ -16,29 +16,32 @@ def func_page_1():
     )
     st.header('DOTA-PSMA-617_Ga-68_2', divider='rainbow')
 
-def preparation():
-    psma_617_df = pd.read_csv('PSMA.csv')
-    output = psma_617_df['A']
-    features = psma_617_df[['day_from_calib_gen', 'k_rec']]
-    st.scatter_chart(psma_617_df, x="day_from_calib_gen", y="A")
-    st.subheader('Визуальное предствление используемой модели')
-    return features, output
-
-def ml_polynomial(features, output):
-    degree = 4
-    model = make_pipeline(PolynomialFeatures(degree), LinearRegression())
-
-    # Fit the model
-    model.fit(features, output)
+#def preparation(): # требуется если только upd модель
+    #psma_617_df = pd.read_csv('PSMA.csv')
+    #output = psma_617_df['A']
+    #features = psma_617_df[['day_from_calib_gen', 'k_rec']]
+    #st.scatter_chart(psma_617_df, x="day_from_calib_gen", y="A")
+    #st.subheader('Визуальное предствление используемой модели')
+    #return features, output
     
-    # Predict
+    #def ml_polynomial(features, output): # требуется если только upd модель
+    #degree = 4
+   #model = make_pipeline(PolynomialFeatures(degree), LinearRegression())
+
+    
+    #model.fit(features, output)
+    
+    
     #self_pred = model.predict(features)
-    
-    # Calculate scores
+        
     #mse = mean_squared_error(output, self_pred)
     #r2 = r2_score(output, self_pred)
     
-    return  model #self_pred, mse, r2,
+    #return  model #self_pred, mse, r2,
+def load_model():
+    with open('polynomial_regression_psma.pkl', 'rb') as psma_pickle:
+        model = pickle.load(psma_pickle)
+    return model
 
 def user_u():
     col1, col2, col3 = st.columns(3)
@@ -86,13 +89,11 @@ def user_u():
     return day_from_calib_gen, k_rec
 
 # Prepare the data
-features, output = preparation()
+#features, output = preparation()
 
-# Perform polynomial regression
-model = ml_polynomial(features, output) #predictions, mse, r2,
+# Load the model
+model = load_model()
 
-#st.write("Mean Squared Error:", mse)
-#st.write("R-squared Score:", r2)
 st.caption('Внесите данные, Дата калибровки генератора Галлия-68, дата и время предыдущего синтеза или ТЭ, дата и время предполагаемого синтеза')
 # Call the user_u function to display the input fields and get the values
 day_from_calib_gen, k_rec = user_u()
@@ -113,7 +114,6 @@ k_rec, day_from_calib_gen = prep_syntes(k_rec, day_from_calib_gen)
 # Display the results
 st.write("k_rec:", k_rec)
 st.write("day_from_calib_gen:", day_from_calib_gen)
-
 
 # Создание DataFrame с переменными
 data = {'day_from_calib_gen': [day_from_calib_gen],
