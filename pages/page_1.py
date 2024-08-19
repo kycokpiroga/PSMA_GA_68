@@ -7,39 +7,39 @@ from sklearn.ensemble import GradientBoostingRegressor
 from sklearn.metrics import mean_squared_error, r2_score
 import datetime
 
-"""def func_page_1():
+def func_page_1():
     st.set_page_config(
         page_title="PSMA",
         page_icon="👋",
     )
-    st.header('DOTA-PSMA-617_Ga-68_2', divider='rainbow')"""
+    st.header('DOTA-PSMA-617_Ga-68_2', divider='rainbow')
 
-"""def preparation():
-    psma_617_df = pd.read_csv('PSMA.csv')
-    output = psma_617_df['A']
-    features = psma_617_df[['day_from_calib_gen', 'k_rec']]
-    st.scatter_chart(psma_617_df, x="day_from_calib_gen", y="A")
-    st.subheader('Визуальное предствление используемой модели')
-    return features, output"""
+#def preparation():
+    #psma_617_df = pd.read_csv('PSMA.csv')
+    #output = psma_617_df['A']
+    #features = psma_617_df[['day_from_calib_gen', 'k_rec']]
+    #st.scatter_chart(psma_617_df, x="day_from_calib_gen", y="A")
+    #st.subheader('Визуальное предствление используемой модели')
+    #return features, output
 
-"""def ml_gradient_boosting(features, output): # требуется если только upd модель
-    model = GradientBoostingRegressor()
+#def ml_gradient_boosting(features, output): # требуется если только upd модель
+    #model = GradientBoostingRegressor()
 
     # Fit the model
-    model.fit(features, output)
+    #model.fit(features, output)
     
     # Predict
-    self_pred = model.predict(features)
+    #self_pred = model.predict(features)
     
     # Calculate scores
-    mse = mean_squared_error(output, self_pred)
-    r2 = r2_score(output, self_pred)
-    st.write(mse, r2)
-    return model, self_pred, mse, r2"""
+    #mse = mean_squared_error(output, self_pred)
+    #r2 = r2_score(output, self_pred)
+    #st.write(mse, r2)
+    #return model, self_pred, mse, r2
 
-"""def save_model(model):
-    with open('gradient_boosting_psma.pkl', 'wb') as psma_pickle:
-        pickle.dump(model, psma_pickle)"""
+#def save_model(model):
+    #with open('gradient_boosting_psma.pkl', 'wb') as psma_pickle:
+        #pickle.dump(model, psma_pickle)
 
 def load_model():
     with open('gradient_boosting_psma.pkl', 'rb') as psma_pickle:
@@ -92,14 +92,14 @@ def user_u():
     return day_from_calib_gen, k_rec
 
 # Prepare the data
-"""features, output = preparation()"""
+#features, output = preparation()
 
 # Check if the model file exists, if not, train and save the model
-"""try:
-    model = load_model()
-except FileNotFoundError:
-    model, self_pred, mse, r2 = ml_gradient_boosting(features, output)
-    save_model(model)"""
+#try:
+    #model = load_model()
+#except FileNotFoundError:
+    #model, self_pred, mse, r2 = ml_gradient_boosting(features, output)
+    #save_model(model)
 
 st.caption('Внесите данные, Дата калибровки генератора Галлия-68, дата и время предыдущего синтеза или ТЭ, дата и время предполагаемого синтеза')
 # Call the user_u function to display the input fields and get the values
@@ -119,8 +119,8 @@ def prep_syntes(k_rec, day_from_calib_gen):
 k_rec, day_from_calib_gen = prep_syntes(k_rec, day_from_calib_gen)
 
 # Display the results
-st.write("k_rec:", k_rec)
-st.write("day_from_calib_gen:", day_from_calib_gen)
+st.write("k_rec:", round(k_rec,3))
+#st.write("day_from_calib_gen:", day_from_calib_gen)
 
 # Создание DataFrame с переменными
 data = {'day_from_calib_gen': [day_from_calib_gen],
@@ -136,4 +136,4 @@ user_pred = model.predict(user_data)
 user_pred = user_pred.round(-1)
 st.write("Предполагаемое значение активности при передачи в КК МБк:")
 st.success(user_pred)
-st.success("± 100 МБк,  R²  = 0.8919")
+st.success("± 100 МБк,  R²  = 0.90")
