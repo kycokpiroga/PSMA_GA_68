@@ -86,8 +86,7 @@ def user_u():
     k_rec = (datetime_selected_2 - datetime_selected_1).total_seconds() / 60
     st.write("Количество минут между синтезами:", k_rec)
     st.write("Количество часов между синтезами:", round(k_rec / 60, 2))
-    days = day_from_calib_gen
-    return day_from_calib_gen, k_rec,days
+    return day_from_calib_gen, k_rec
 
 # Prepare the data
 #features, output = preparation()
@@ -97,7 +96,7 @@ model = load_model()
 
 st.caption('Внесите данные, Дата калибровки генератора Галлия-68, дата и время предыдущего синтеза или ТЭ, дата и время предполагаемого синтеза')
 # Call the user_u function to display the input fields and get the values
-day_from_calib_gen, k_rec, days = user_u()
+day_from_calib_gen, k_rec = user_u()
 
 def prep_syntes(k_rec, day_from_calib_gen):
     k_rec = -0.000008 * (k_rec ** 2) + 0.0052 * k_rec + 0.1552
@@ -115,7 +114,6 @@ k_rec, day_from_calib_gen = prep_syntes(k_rec, day_from_calib_gen)
 
 # Display the results
 st.write("k_rec:", k_rec)
-st.write("Дней между синтезом и датой калибровки генератора:", days)
 
 # Создание DataFrame с переменными
 data = {'day_from_calib_gen': [day_from_calib_gen],
