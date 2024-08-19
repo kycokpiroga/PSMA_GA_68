@@ -3,43 +3,46 @@ import pandas as pd
 import numpy as np
 import wget
 import pickle
-from sklearn.preprocessing import PolynomialFeatures
-from sklearn.linear_model import LinearRegression
-from sklearn.pipeline import make_pipeline
+from sklearn.ensemble import GradientBoostingRegressor
 from sklearn.metrics import mean_squared_error, r2_score
 import datetime
 
-def func_page_1():
+"""def func_page_1():
     st.set_page_config(
         page_title="PSMA",
         page_icon="👋",
     )
-    st.header('DOTA-PSMA-617_Ga-68_2', divider='rainbow')
+    st.header('DOTA-PSMA-617_Ga-68_2', divider='rainbow')"""
 
-#def preparation(): # требуется если только upd модель
-    #psma_617_df = pd.read_csv('PSMA.csv')
-    #output = psma_617_df['A']
-    #features = psma_617_df[['day_from_calib_gen', 'k_rec']]
-    #st.scatter_chart(psma_617_df, x="day_from_calib_gen", y="A")
-    #st.subheader('Визуальное предствление используемой модели')
-    #return features, output
-    
-    #def ml_polynomial(features, output): # требуется если только upd модель
-    #degree = 4
-   #model = make_pipeline(PolynomialFeatures(degree), LinearRegression())
+"""def preparation():
+    psma_617_df = pd.read_csv('PSMA.csv')
+    output = psma_617_df['A']
+    features = psma_617_df[['day_from_calib_gen', 'k_rec']]
+    st.scatter_chart(psma_617_df, x="day_from_calib_gen", y="A")
+    st.subheader('Визуальное предствление используемой модели')
+    return features, output"""
 
+"""def ml_gradient_boosting(features, output): # требуется если только upd модель
+    model = GradientBoostingRegressor()
+
+    # Fit the model
+    model.fit(features, output)
     
-    #model.fit(features, output)
+    # Predict
+    self_pred = model.predict(features)
     
-    
-    #self_pred = model.predict(features)
-        
-    #mse = mean_squared_error(output, self_pred)
-    #r2 = r2_score(output, self_pred)
-    
-    #return  model #self_pred, mse, r2,
+    # Calculate scores
+    mse = mean_squared_error(output, self_pred)
+    r2 = r2_score(output, self_pred)
+    st.write(mse, r2)
+    return model, self_pred, mse, r2"""
+
+"""def save_model(model):
+    with open('gradient_boosting_psma.pkl', 'wb') as psma_pickle:
+        pickle.dump(model, psma_pickle)"""
+
 def load_model():
-    with open('polynomial_regression_psma.pkl', 'rb') as psma_pickle:
+    with open('gradient_boosting_psma.pkl', 'rb') as psma_pickle:
         model = pickle.load(psma_pickle)
     return model
 
@@ -89,10 +92,14 @@ def user_u():
     return day_from_calib_gen, k_rec
 
 # Prepare the data
-#features, output = preparation()
+"""features, output = preparation()"""
 
-# Load the model
-model = load_model()
+# Check if the model file exists, if not, train and save the model
+"""try:
+    model = load_model()
+except FileNotFoundError:
+    model, self_pred, mse, r2 = ml_gradient_boosting(features, output)
+    save_model(model)"""
 
 st.caption('Внесите данные, Дата калибровки генератора Галлия-68, дата и время предыдущего синтеза или ТЭ, дата и время предполагаемого синтеза')
 # Call the user_u function to display the input fields and get the values
@@ -101,8 +108,7 @@ day_from_calib_gen, k_rec = user_u()
 def prep_syntes(k_rec, day_from_calib_gen):
     k_rec = -0.000008 * (k_rec ** 2) + 0.0052 * k_rec + 0.1552
     day_from_calib_gen = day_from_calib_gen * (-1)
-    if day_from_calib_gen < -276:
-        day_from_calib_gen = -276
+    
     if k_rec < 0:
         k_rec = 1
     if k_rec > 1:
@@ -113,12 +119,15 @@ def prep_syntes(k_rec, day_from_calib_gen):
 k_rec, day_from_calib_gen = prep_syntes(k_rec, day_from_calib_gen)
 
 # Display the results
-st.write("k_rec:", round(k_rec, 3))
+st.write("k_rec:", k_rec)
+st.write("day_from_calib_gen:", day_from_calib_gen)
 
 # Создание DataFrame с переменными
 data = {'day_from_calib_gen': [day_from_calib_gen],
     'k_rec': [k_rec]  
 }
+# Load the model
+model = load_model()
 
 user_data = pd.DataFrame(data)
 # Вывод DataFrame
